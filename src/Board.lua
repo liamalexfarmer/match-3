@@ -141,3 +141,123 @@ function Board:calculateMatches(  )
 	 return #self.matches > 0 and self.matches or false
 
 end
+
+--[[
+	Set tiles that are tabled for removal to nil.
+]]
+
+function Board:removeMatches(  )
+	for k, match in pairs(self.matches) do
+		for k, tile in pairs(match) do
+			self.tiles[tile.gridY][tile.gridX] = nil
+		end
+	end
+
+	self.matches = nil
+end
+
+--[[
+	Collapses the tiles down to their lowest point based on gaps left behind by matches.
+	Returns a table with data to facilitate tweening.
+]]
+
+function Board:getFallingTiles(  )
+	--tweens table, where tiles will act as keys to deliver tweens so bricks fall from off screen
+	local tweens = {}
+
+	for x = 1, 8 do
+		--variables used to track conditions
+		local space = false
+		local spaceY = 0
+
+		--leveraging gridY
+		local y = 8
+
+		while y >= 1 do
+
+			local tile = self.tile[y][x]
+
+			--if the space flag is active, meaning the previous grid slot is empty
+			if space then
+
+				--if the current grid slot has a tile in it
+				if tile then
+
+					--move (duplicate) it to the previous slot that's empty
+					self.tiles[spaceY][x] = tile
+
+					--set spaceY to the new tile spot for later use
+					tile.gridY = spaceY
+
+					--set it's initial space to empty
+					self.tiles[y][x] = nil
+
+					--store the tween data that slides it into place
+					tweens[tile] = {
+						y = (tile.gridY - 1) * 32
+					}
+
+					--reset the space flag
+					space = false
+					--set y to the new tile's position to restart the check
+					y = spaceY
+
+					--reset spaceY to indicate no "active" space
+					spaceY = 0
+
+				end
+
+			--if there's no tile then flag space as true
+			elseif tile = nil then
+				space = true
+
+				--if a space in the column hasn't been detected yet, set spaceY to current y
+				if spaceY == 0 then
+					spaceY = y
+				end
+			end
+
+			--lower y and check the next space
+			y = y - 1
+
+		end
+
+	end
+
+	--from the first to the eight column
+	for x = 1, 8 do
+		--check each row from lowest on screen to highest
+		for y = 8, 1, -1 do
+			--set tile to the current grid slot's tile
+			local tile = self.tiles[y][x]
+
+			--if there is no tile present
+			if not tile then
+				--create a random one assigned to the current grid position (x, y translate to tile.gridX/gridY)
+				local tile = Tile(x, y, math.random(18), math.random(6))
+
+				--set it's coordinate y value to above the top edge of the screen
+				tile.y = -32
+
+				--assign the tile to the empty grid slot in the grid tile table
+				self.tiles[y][x] = tile
+
+				--deliver the tween data for it's final resting place
+				tweens[tile] = {
+					y = (tile.gridY - 1) * 32
+				}
+			end
+		end
+	end
+
+	--return the tween data for rendering and what not
+	return tweens
+end
+
+function Board:render(  )
+	for y = 1, #self.tiles do
+		for x = 1, #self.tiles[1] do
+			self.tiles[y][x]:render(self.x, self.y)
+		end
+	end
+end
