@@ -63,10 +63,10 @@ function love.load(  )
     gSounds.music:setLooping(true)
     gSounds.music:play()
 
-    gStateMachine = StateMachine {
+    gStateMachine = StateMachine{
         ['start'] = function() return StartState() end,
         ['begin-game'] = function() return BeginGameState() end,
-        ['play'] = function() return PlatState() end,
+        ['play'] = function() return PlayState() end,
         ['game-over'] = function() return GameOverState() end
     }
 
@@ -89,7 +89,7 @@ function love.keypressed(key)
 end
 
 function love.keyboard.wasPressed(key)
-    if love.keyboard.wasPressed[key] then
+    if love.keyboard.keysPressed[key] then
         return true
     else
         return false

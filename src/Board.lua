@@ -100,7 +100,7 @@ function Board:calculateMatches(  )
 	 	matchNum = 1
 
 	 	for y = 2, 8 do
-	 		if self.tiles[y][x].color = colorToMatch then
+	 		if self.tiles[y][x].color == colorToMatch then
 	 			matchNum = matchNum + 1
 	 		else
 	 			colorToMatch = self.tiles[y][x].color
@@ -208,7 +208,7 @@ function Board:getFallingTiles(  )
 				end
 
 			--if there's no tile then flag space as true
-			elseif tile = nil then
+			elseif tile == nil then
 				space = true
 
 				--if a space in the column hasn't been detected yet, set spaceY to current y

@@ -28,6 +28,6 @@ function Tile:render( x, y )
 
 	--draw the tile over the shadow
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.draw(gTextures.main, gFrames.tiles[self.color][self.variety]
+	love.graphics.draw(gTextures.main, gFrames.tiles[self.color][self.variety],
 		self.x + x, self.y + y)
 end

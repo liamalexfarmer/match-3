@@ -4,7 +4,7 @@
 
 
 
-function GenerateQuads( atlas )
+function GenerateTileQuads( atlas )
 	local tiles = {}
 
 	local x = 0
@@ -21,7 +21,7 @@ function GenerateQuads( atlas )
 
 			--six patterns
 			for col = 1, 6 do
-				table.insert(tiles[counter], love.grapics.newQuad(
+				table.insert(tiles[counter], love.graphics.newQuad(
 					x, y, 32, 32, atlas:getDimensions()
 				))
 				x = x + 32
